@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useForm, Controller, SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
@@ -11,6 +11,8 @@ import {
   Typography,
   FormControlLabel,
   Checkbox,
+  Alert,
+  Snackbar,
 } from "@mui/material";
 
 // フォームの型定義
@@ -41,11 +43,12 @@ const schema = yup
   .required();
 
 function App() {
-  const [categories, setCategories] = React.useState<string[]>([]);
+  const [categories, setCategories] = useState<string[]>([]);
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
   const {
     control,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting },
     watch,
     reset,
   } = useForm<ExpenseFormData>({
@@ -64,7 +67,7 @@ function App() {
   const type = watch("type");
 
   // 収入/支出の選択に応じてカテゴリーを更新
-  React.useEffect(() => {
+  useEffect(() => {
     if (type === "収入") {
       setCategories(["給与", "副業", "臨時収入", "その他・収入"]);
     } else if (type === "支出") {
@@ -104,9 +107,55 @@ function App() {
     });
   };
 
-  const onSubmit = (data: ExpenseFormData) => {
-    console.log(data);
-    // ここでデータの保存処理を実装
+  const onSubmit = async (data: ExpenseFormData) => {
+    try {
+      // Google Formsへの送信
+      const formData = new FormData();
+      Object.entries(data).forEach(([key, value]) => {
+        if (value !== undefined) {
+          if (key === "eatingOut") {
+            if (value === true) {
+              formData.append(`entry.${getEntryId(key)}`, "外食");
+            }
+          } else if (key === "date") {
+            // 日付をハイフン区切りからスラッシュ区切りに変換
+            const dateValue = value.toString().replace(/-/g, "/");
+            formData.append(`entry.${getEntryId(key)}`, dateValue);
+          } else {
+            formData.append(`entry.${getEntryId(key)}`, value.toString());
+          }
+        }
+      });
+
+      // FormDataをURLSearchParamsに変換
+      const params = new URLSearchParams();
+      for (const [key, value] of formData.entries()) {
+        params.append(key, value.toString());
+      }
+
+      const response = await fetch(
+        "https://docs.google.com/forms/u/0/d/e/1FAIpQLScoM_D0sgx9sCPpMbWa8C1jp_FoMKhuCmwXh0e6g6mfsDCKeQ/formResponse",
+        {
+          method: "POST",
+          mode: "no-cors",
+          body: params,
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+        }
+      );
+      console.log("送信レスポンス:", response);
+
+      // 成功メッセージの表示
+      setShowSuccessMessage(true);
+      reset();
+    } catch (error) {
+      console.error("送信エラー:", error);
+    }
+  };
+
+  const handleCloseSuccessMessage = () => {
+    setShowSuccessMessage(false);
   };
 
   return (
@@ -253,16 +302,46 @@ function App() {
         />
 
         <Box sx={{ display: "flex", gap: 2, justifyContent: "center" }}>
-          <Button type="submit" variant="contained" color="primary">
-            保存
+          <Button
+            type="submit"
+            variant="contained"
+            color="primary"
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? "送信中..." : "保存"}
           </Button>
           <Button type="button" onClick={handleReset} variant="outlined">
             リセット
           </Button>
         </Box>
       </Box>
+
+      <Snackbar
+        open={showSuccessMessage}
+        autoHideDuration={3000}
+        onClose={handleCloseSuccessMessage}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      >
+        <Alert onClose={handleCloseSuccessMessage} severity="success">
+          登録完了！
+        </Alert>
+      </Snackbar>
     </Container>
   );
+}
+
+// Google FormsのエントリーIDを取得する関数
+function getEntryId(key: string): string {
+  const entryMap: Record<string, string> = {
+    date: "1683306364",
+    type: "1284079828",
+    category: "1638872185",
+    description: "510324176",
+    amount: "64140339",
+    paymentMethod: "641361729",
+    eatingOut: "1947501817",
+  };
+  return entryMap[key] || "";
 }
 
 export default App;
