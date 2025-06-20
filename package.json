@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "homepage": "https://[あなたのGitHubユーザー名].github.io/household-account-form",
+  "homepage": "https://yu-ta-tech.github.io/household-account-form",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
