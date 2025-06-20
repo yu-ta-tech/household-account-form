@@ -58,7 +58,7 @@ function App() {
       type: "",
       category: "",
       description: "",
-      amount: 0,
+      amount: undefined,
       paymentMethod: "",
       eatingOut: false,
     },
@@ -101,7 +101,7 @@ function App() {
       type: "",
       category: "",
       description: "",
-      amount: 0,
+      amount: undefined,
       paymentMethod: "",
       eatingOut: false,
     });
@@ -256,6 +256,7 @@ function App() {
               label="金額"
               type="number"
               {...field}
+              value={field.value || ""}
               error={!!errors.amount}
               helperText={errors.amount?.message}
             />
