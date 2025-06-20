@@ -235,6 +235,24 @@ function App() {
           )}
         />
 
+        {watch("category") === "食費" && (
+          <Controller
+            name="eatingOut"
+            control={control}
+            render={({ field: { value, onChange } }) => (
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={value}
+                    onChange={(e) => onChange(e.target.checked)}
+                  />
+                }
+                label="外食"
+              />
+            )}
+          />
+        )}
+
         <Controller
           name="description"
           control={control}
@@ -283,22 +301,6 @@ function App() {
               <MenuItem value="口座振替">口座振替</MenuItem>
               <MenuItem value="セゾン（高速料金）">セゾン（高速料金）</MenuItem>
             </TextField>
-          )}
-        />
-
-        <Controller
-          name="eatingOut"
-          control={control}
-          render={({ field: { value, onChange } }) => (
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={value}
-                  onChange={(e) => onChange(e.target.checked)}
-                />
-              }
-              label="外食"
-            />
           )}
         />
 
