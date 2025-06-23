@@ -75,14 +75,14 @@ function App() {
         "食費",
         "雑費",
         "日用品",
+        "衣服・美容",
+        "健康・医療",
         "交通費",
         "趣味・娯楽",
-        "教養・教育",
-        "衣服・美容",
         "自動車",
-        "健康・医療",
         "水道・光熱費",
         "通信費",
+        "教養・教育",
         "保険",
         "住宅",
         "その他・貯金",
@@ -200,14 +200,14 @@ function App() {
           render={({ field }) => (
             <TextField
               select
-              label="収入 or 支出"
+              label="支出 or 収入"
               {...field}
               error={!!errors.type}
               helperText={errors.type?.message}
             >
               <MenuItem value="">選択してください</MenuItem>
-              <MenuItem value="収入">収入</MenuItem>
               <MenuItem value="支出">支出</MenuItem>
+              <MenuItem value="収入">収入</MenuItem>
               <MenuItem value="チャージ">チャージ</MenuItem>
               <MenuItem value="入金">入金</MenuItem>
             </TextField>
@@ -294,11 +294,11 @@ function App() {
             >
               <MenuItem value="">選択してください</MenuItem>
               <MenuItem value="楽天">楽天</MenuItem>
+              <MenuItem value="現金">現金</MenuItem>
               <MenuItem value="Amazon">Amazon</MenuItem>
               <MenuItem value="イオン">イオン</MenuItem>
-              <MenuItem value="現金">現金</MenuItem>
-              <MenuItem value="チャージ">チャージ</MenuItem>
               <MenuItem value="口座振替">口座振替</MenuItem>
+              <MenuItem value="チャージ">チャージ</MenuItem>
               <MenuItem value="セゾン（高速料金）">セゾン（高速料金）</MenuItem>
             </TextField>
           )}
@@ -311,7 +311,7 @@ function App() {
             color="primary"
             disabled={isSubmitting}
           >
-            {isSubmitting ? "送信中..." : "保存"}
+            {isSubmitting ? "送信中..." : "送信"}
           </Button>
           <Button type="button" onClick={handleReset} variant="outlined">
             リセット
