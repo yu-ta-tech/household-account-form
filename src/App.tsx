@@ -107,7 +107,8 @@ function App() {
     });
   };
 
-  const onSubmit = async (data: ExpenseFormData) => {
+  // Google Form送信の共通処理
+  const submitToGoogleForm = async (data: ExpenseFormData) => {
     try {
       // Google Formsへの送信
       const formData = new FormData();
@@ -148,9 +149,22 @@ function App() {
 
       // 成功メッセージの表示
       setShowSuccessMessage(true);
-      reset();
+      return true;
     } catch (error) {
       console.error("送信エラー:", error);
+      return false;
+    }
+  };
+
+  const onSubmit = async (data: ExpenseFormData) => {
+    await submitToGoogleForm(data);
+  };
+
+  const handleSubmitAndReset = async (data: ExpenseFormData) => {
+    const success = await submitToGoogleForm(data);
+    if (success) {
+      // 送信後にリセット
+      handleReset();
     }
   };
 
@@ -273,6 +287,7 @@ function App() {
             <TextField
               label="金額"
               type="number"
+              inputMode="numeric"
               {...field}
               value={field.value || ""}
               error={!!errors.amount}
@@ -304,17 +319,54 @@ function App() {
           )}
         />
 
-        <Box sx={{ display: "flex", gap: 2, justifyContent: "center" }}>
+        <Box
+          sx={{
+            display: "flex",
+            gap: 2,
+            justifyContent: "center",
+            flexWrap: "wrap",
+          }}
+        >
           <Button
             type="submit"
-            variant="contained"
-            color="primary"
+            variant="outlined"
+            color="inherit"
             disabled={isSubmitting}
+            sx={{
+              flex: 1,
+              minWidth: "120px",
+              maxWidth: "200px",
+              borderColor: "#9e9e9e",
+              color: "#616161",
+              "&:hover": {
+                borderColor: "#757575",
+                backgroundColor: "#f5f5f5",
+              },
+            }}
           >
             {isSubmitting ? "送信中..." : "送信"}
           </Button>
-          <Button type="button" onClick={handleReset} variant="outlined">
-            リセット
+          <Button
+            type="button"
+            onClick={handleSubmit(handleSubmitAndReset)}
+            variant="contained"
+            color="primary"
+            disabled={isSubmitting}
+            sx={{
+              flex: 2,
+              minWidth: "120px",
+              maxWidth: "200px",
+              fontWeight: "bold",
+              boxShadow: 3,
+              backgroundColor: "#1976d2",
+              "&:hover": {
+                boxShadow: 6,
+                transform: "translateY(-1px)",
+                backgroundColor: "#1565c0",
+              },
+            }}
+          >
+            {isSubmitting ? "送信中..." : "送信してリセット"}
           </Button>
         </Box>
       </Box>
