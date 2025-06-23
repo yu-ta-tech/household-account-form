@@ -287,7 +287,11 @@ function App() {
             <TextField
               label="金額"
               type="number"
-              inputMode="numeric"
+              inputMode="decimal"
+              inputProps={{
+                pattern: "[0-9]*",
+                inputMode: "decimal",
+              }}
               {...field}
               value={field.value || ""}
               error={!!errors.amount}
