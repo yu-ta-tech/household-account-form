@@ -119,9 +119,8 @@ function App() {
               formData.append(`entry.${getEntryId(key)}`, "外食");
             }
           } else if (key === "date") {
-            // 日付をハイフン区切りからスラッシュ区切りに変換
-            const dateValue = value.toString().replace(/-/g, "/");
-            formData.append(`entry.${getEntryId(key)}`, dateValue);
+            // 日付をハイフン区切りのまま送信
+            formData.append(`entry.${getEntryId(key)}`, value.toString());
           } else {
             formData.append(`entry.${getEntryId(key)}`, value.toString());
           }
